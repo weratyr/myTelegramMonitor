@@ -1,0 +1,11 @@
+[Unit]
+Description=My Telegram Monitor
+After=network.target 
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/myTelegramBot
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

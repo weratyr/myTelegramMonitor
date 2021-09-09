@@ -1,0 +1,43 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    #- name: Install python3 telegram bot package
+    #apt:
+    # name: python3-python-telegram-bot
+    # update_cache: yes
+    # state: latest
+    # install_recommends: no
+    # vars: 
+    #  - python3-python-telegram-bot
+    #  - python3-pystemd
+
+  - name: Copy systemd service
+    copy:
+      src:  ../etc/myTelegramBot.service
+      dest: /etc/systemd/system/
+      owner: root
+      group: root
+      mode: 0644
+  - name: Copy myTelegramBot.py
+    copy:
+      src:  ../src/myTelegramBot.py
+      dest: /usr/local/sbin/myTelegramBot
+      owner: root
+      group: root
+      mode: 0755
+  - name: mkdir /etc/myTelegramBot
+    file: path=/etc/myTelegramBot/ state=directory
+  - name: Copy config
+    copy:
+      src:  "../nodes/{{ ansible_facts['hostname'] }}/config.py"
+      dest: /etc/myTelegramBot/
+      owner: root
+      group: root
+      mode: 0644
+  - name: Enable and restart the systemd service
+    systemd:
+      name: myTelegramBot.service
+      state: restarted
+      daemon_reload: yes
+      enabled: yes
